@@ -7,6 +7,10 @@ import random
 
 DIST = 8
 
+def secret_code():
+    print "Secret Code : "
+    inputedCode=input()
+    return inputedCode
 
 def normalize_pixel(r, g, b):
     """
@@ -173,18 +177,29 @@ class Steganography(object):
 # Main program
 def main():
     if len(sys.argv) == 5 and sys.argv[1] == '-e':
+        # input secret code
+        secretCode=secret_code()
+
         # encode
         print("Start Encode")
         input_image_path = sys.argv[2]
         output_image_path = sys.argv[3]
-        text = sys.argv[4]
+        text = sys.argv[4]+secretCode
         Steganography.encode(input_image_path, output_image_path, text)
         print("Finish:{}".format(output_image_path))
         return
     if len(sys.argv) == 3 and sys.argv[1] == '-d':
+        # input secret code
+        secretCode=secret_code()
         # decode
         input_image_path = sys.argv[2]
-        print(Steganography.decode(input_image_path))
+        result=Steganography.decode(input_image_path)
+        # check secret code
+        leakSecretCode=result[lens(result)-lens(secretCode):]
+        if secretCode==leakSecretCode :
+                print(Steganography.decode(input_image_path)[0:lens(result)-lens(secretCode)])
+        else :
+                print("Wrong Secret Code :<")
         return
     print_help_text()
 
